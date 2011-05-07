@@ -45,7 +45,7 @@ if ($action == "ACTION_CHATTER") {
 	$last = isset($_POST['last']) ? filter_var($_POST['last'], FILTER_SANITIZE_NUMBER_INT) : 0;
 	// Connect and query
 	if ($socket = fsockopen($query_server, $port, $errno, $error, 2)) {
-		fwrite($socket, "QUERY " . $username . ":" . $_SERVER['REMOTE_ADDR'] . ":" . $last . "\r\n");
+		fwrite($socket, "QUERY_XML " . $username . ":" . $_SERVER['REMOTE_ADDR'] . ":" . $last . "\r\n");
 		while (!feof($socket)) {
 			echo fgets($socket, 128);
 		}

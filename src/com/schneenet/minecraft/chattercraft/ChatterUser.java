@@ -1,3 +1,4 @@
+package com.schneenet.minecraft.chattercraft;
 
 public class ChatterUser {
 	private String _username;

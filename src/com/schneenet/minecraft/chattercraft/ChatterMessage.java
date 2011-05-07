@@ -1,3 +1,4 @@
+package com.schneenet.minecraft.chattercraft;
 /**
  * Message Object Class
  */
