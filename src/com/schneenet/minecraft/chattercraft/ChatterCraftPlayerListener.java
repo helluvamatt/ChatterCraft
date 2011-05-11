@@ -17,7 +17,7 @@ public class ChatterCraftPlayerListener extends PlayerListener {
 	
 	@Override
 	public void onPlayerChat(PlayerChatEvent e) {
-		if (parent.getSendAllChats()) {
+		if (parent.getChatEnabled() && parent.getSendAllChats()) {
 			ChatterCraftPlugin.getChatterCraftServer().postMessage(ChatterMessage.createMessage(e.getPlayer().getDisplayName(), "player", e.getMessage()));
 		}
 	}

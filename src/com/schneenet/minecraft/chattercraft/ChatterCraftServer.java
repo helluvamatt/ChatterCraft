@@ -47,26 +47,21 @@ public class ChatterCraftServer extends Thread {
 	}
 
 	public void startup() {
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,
-				new Runnable() {
-					@Override
-					public void run() {
-						Iterator<ChatterUser> iter = onlineUsers.iterator();
-						while (iter.hasNext()) {
-							ChatterUser user = iter.next();
-							if (user
-									.isOlderThan(System.currentTimeMillis() - 3000)) {
-								plugin
-										.getServer()
-										.broadcastMessage(
-												ChatColor.YELLOW
-														+ user.getUsername()
-														+ " [WWW User] has disconnected from chat.");
-								iter.remove();
-							}
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+				Iterator<ChatterUser> iter = onlineUsers.iterator();
+				while (iter.hasNext()) {
+					ChatterUser user = iter.next();
+					if (user.isOlderThan(System.currentTimeMillis() - 3000)) {
+						if (plugin.getNotifySignOff()) {
+							plugin.getServer().broadcastMessage(ChatColor.YELLOW + user.getUsername() + " [WWW User] has disconnected from chat.");
 						}
+						iter.remove();
 					}
-				}, 0, 1000);
+				}
+			}
+		}, 0, 1000);
 
 		// Start listening
 		this.start();
@@ -109,34 +104,24 @@ public class ChatterCraftServer extends Thread {
 			while (!serverSocket.isClosed()) {
 
 				Socket connectionSocket = serverSocket.accept();
-				BufferedReader inFromClient = new BufferedReader(
-						new InputStreamReader(connectionSocket.getInputStream()));
-				DataOutputStream outToClient = new DataOutputStream(
-						connectionSocket.getOutputStream());
+				BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+				DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 				String in = inFromClient.readLine();
 
 				if (in != null) {
 					String[] split = in.split("\\s+", 2);
 					if (split[0].equalsIgnoreCase("QUERY")) {
-						String[] playerList = new String[plugin.getServer()
-								.getOnlinePlayers().length];
-						for (int i = 0; i < plugin.getServer()
-								.getOnlinePlayers().length; i++) {
-							playerList[i] = plugin.getServer()
-									.getOnlinePlayers()[i].getName();
+						String[] playerList = new String[plugin.getServer().getOnlinePlayers().length];
+						for (int i = 0; i < plugin.getServer().getOnlinePlayers().length; i++) {
+							playerList[i] = plugin.getServer().getOnlinePlayers()[i].getName();
 						}
 
 						// Build the response.
 						StringBuilder resp = new StringBuilder();
-						resp.append("SERVERPORT "
-								+ plugin.getServer().getPort() + "\n");
-						resp.append("PLAYERCOUNT "
-								+ plugin.getServer().getOnlinePlayers().length
-								+ "\n");
-						resp.append("MAXPLAYERS "
-								+ plugin.getServer().getMaxPlayers() + "\n");
-						resp.append("PLAYERLIST " + Arrays.toString(playerList)
-								+ "\n");
+						resp.append("SERVERPORT " + plugin.getServer().getPort() + "\n");
+						resp.append("PLAYERCOUNT " + plugin.getServer().getOnlinePlayers().length + "\n");
+						resp.append("MAXPLAYERS " + plugin.getServer().getMaxPlayers() + "\n");
+						resp.append("PLAYERLIST " + Arrays.toString(playerList) + "\n");
 
 						// Send the response.
 						outToClient.writeBytes(resp.toString());
@@ -146,19 +131,14 @@ public class ChatterCraftServer extends Thread {
 						// Build the JSON response.
 						StringBuilder resp = new StringBuilder();
 						resp.append("{");
-						resp.append("\"serverPort\":").append(
-								plugin.getServer().getPort()).append(",");
-						resp.append("\"playerCount\":").append(
-								plugin.getServer().getOnlinePlayers().length)
-								.append(",");
-						resp.append("\"maxPlayers\":").append(
-								plugin.getServer().getMaxPlayers()).append(",");
+						resp.append("\"serverPort\":").append(plugin.getServer().getPort()).append(",");
+						resp.append("\"playerCount\":").append(plugin.getServer().getOnlinePlayers().length).append(",");
+						resp.append("\"maxPlayers\":").append(plugin.getServer().getMaxPlayers()).append(",");
 						resp.append("\"playerList\":");
 						resp.append("[");
 						// Iterate through the players.
 						int count = 0;
-						for (Player player : plugin.getServer()
-								.getOnlinePlayers()) {
+						for (Player player : plugin.getServer().getOnlinePlayers()) {
 							resp.append("\"" + player.getName() + "\"");
 							if (++count < plugin.getServer().getOnlinePlayers().length) {
 								resp.append(",");
@@ -180,15 +160,13 @@ public class ChatterCraftServer extends Thread {
 							Iterator<ChatterUser> iter = onlineUsers.iterator();
 							while (iter.hasNext()) {
 								ChatterUser user = iter.next();
-								if (user.getUsername().equals(un)
-										&& user.getIP().equals(ip)) {
+								if (user.getUsername().equals(un) && user.getIP().equals(ip)) {
 									user.access();
 									username = un;
 									break;
 								}
 							}
-							since = args.length > 1 ? Long.parseLong(args[2])
-									: 0;
+							since = args.length > 1 ? Long.parseLong(args[2]) : 0;
 						}
 
 						int serverPort = plugin.getServer().getPort();
@@ -218,14 +196,10 @@ public class ChatterCraftServer extends Thread {
 						Iterator<ChatterUser> iter = onlineUsers.iterator();
 						while (iter.hasNext()) {
 							ChatterUser user = iter.next();
-							if (user
-									.isOlderThan(System.currentTimeMillis() - 3000)) {
-								plugin
-										.getServer()
-										.broadcastMessage(
-												ChatColor.YELLOW
-														+ user.getUsername()
-														+ " [WWW User] has disconnected from chat.");
+							if (user.isOlderThan(System.currentTimeMillis() - 3000)) {
+								if (plugin.getNotifySignOff()) {
+									plugin.getServer().broadcastMessage(ChatColor.YELLOW + user.getUsername() + " [WWW User] has disconnected from chat.");
+								}
 								iter.remove();
 							} else {
 								sb.append("<user>");
@@ -236,47 +210,45 @@ public class ChatterCraftServer extends Thread {
 						sb.append("</playerlist>\n");
 
 						// Chatter
-						if (!username.isEmpty()) {
-							long now = System.currentTimeMillis();
-							if (since != 0) {
-								if (now > since) {
-									sb.append("<chatter now=\"");
-									sb.append(now);
-									sb.append("\" since=\"");
-									sb.append(since);
-									sb.append("\">\n");
-									synchronized (messages) {
-										Iterator<ChatterMessage> iter2 = messages
-												.iterator();
-										while (iter2.hasNext()) {
-											ChatterMessage msg = iter2.next();
-											if (msg.getTimestamp() > since) {
-												sb
-														.append("<message timestamp=\"");
-												sb.append(msg.getTimestamp());
-												sb.append("\" player=\"");
-												sb.append(msg.getUsername());
-												sb.append("\" type=\"");
-												sb.append(msg.getUsertype());
-												sb.append("\">");
-												sb.append(msg.getMessage());
-												sb.append("</message>\n");
+						if (plugin.getChatEnabled()) {
+							if (!username.isEmpty()) {
+								long now = System.currentTimeMillis();
+								if (since != 0) {
+									if (now > since) {
+										sb.append("<chatter now=\"");
+										sb.append(now);
+										sb.append("\" since=\"");
+										sb.append(since);
+										sb.append("\">\n");
+										synchronized (messages) {
+											Iterator<ChatterMessage> iter2 = messages.iterator();
+											while (iter2.hasNext()) {
+												ChatterMessage msg = iter2.next();
+												if (msg.getTimestamp() > since) {
+													sb.append("<message timestamp=\"");
+													sb.append(msg.getTimestamp());
+													sb.append("\" player=\"");
+													sb.append(msg.getUsername());
+													sb.append("\" type=\"");
+													sb.append(msg.getUsertype());
+													sb.append("\">");
+													sb.append(msg.getMessage());
+													sb.append("</message>\n");
+												}
 											}
 										}
+										sb.append("</chatter>\n");
+									} else {
+										sb.append("<error>Invalid timestamp.</error>\n");
 									}
-									sb.append("</chatter>\n");
 								} else {
-									sb
-											.append("<error>Invalid timestamp.</error>\n");
+									sb.append("<chatter now=\"");
+									sb.append(now);
+									sb.append("\" />\n");
 								}
 							} else {
-								sb.append("<chatter now=\"");
-								sb.append(now);
-								sb.append("\" />\n");
+								sb.append("<error>Please login.</error>\n");
 							}
-						} else {
-							// TODO Explain why they are not logged in
-							sb.append("<error>Please login.</error>\n");
 						}
 						sb.append("</mcserver>\n");
 						try {
@@ -285,49 +257,39 @@ public class ChatterCraftServer extends Thread {
 						}
 					} else if (split[0].equalsIgnoreCase("CHATTER")) {
 						StringBuffer sb = new StringBuffer();
-						if (split.length > 1 && !split[1].isEmpty()) {
-							// Parse the argument into username and message
-							String[] args = split[1].split("\\:", 3);
-							if (args.length > 2) {
-								String un = args[0];
-								String ip = args[1];
-								Iterator<ChatterUser> iter = onlineUsers
-										.iterator();
-								boolean found = false;
-								while (iter.hasNext()) {
-									ChatterUser user = iter.next();
-									if (user.getUsername().equals(un)
-											&& user.getIP().equals(ip)) {
-										user.access();
-										plugin.getServer().broadcastMessage(
-												ChatColor.WHITE + "<"
-														+ ChatColor.AQUA
-														+ "[WWW Portal] "
-														+ ChatColor.RED + un
-														+ ChatColor.WHITE
-														+ "> " + args[2]);
-										synchronized (messages) {
-											messages.add(ChatterMessage
-													.createMessage(args[0]
-															+ " (WWW Portal)",
-															"user", args[2]));
+						if (plugin.getChatEnabled()) {
+							if (split.length > 1 && !split[1].isEmpty()) {
+								// Parse the argument into username and message
+								String[] args = split[1].split("\\:", 3);
+								if (args.length > 2) {
+									String un = args[0];
+									String ip = args[1];
+									Iterator<ChatterUser> iter = onlineUsers.iterator();
+									boolean found = false;
+									while (iter.hasNext()) {
+										ChatterUser user = iter.next();
+										if (user.getUsername().equals(un) && user.getIP().equals(ip)) {
+											user.access();
+											plugin.getServer().broadcastMessage(ChatColor.WHITE + "<" + ChatColor.AQUA + "[WWW Portal] " + ChatColor.RED + un + ChatColor.WHITE + "> " + args[2]);
+											synchronized (messages) {
+												messages.add(ChatterMessage.createMessage(args[0] + " (WWW Portal)", "user", args[2]));
+											}
+											sb.append("<success>Message sent.</success>\n");
+											found = true;
+											break;
 										}
-										sb
-												.append("<success>Message sent.</success>\n");
-										found = true;
-										break;
 									}
-								}
-								if (!found) {
-									sb
-											.append("<error>User not found.</error>\n");
+									if (!found) {
+										sb.append("<error>User not found.</error>\n");
+									}
+								} else {
+									sb.append("<error>Missing argument(s).</error>\n");
 								}
 							} else {
-								sb
-										.append("<error>Missing argument(s).</error>\n");
+								sb.append("<error>Missing argument.</error>\n");
 							}
 						} else {
-							sb.append("<error>Missing argument.</error>\n");
+							sb.append("<error>Chat is disabled.</error>\n");
 						}
 						try {
 							outToClient.writeBytes(sb.toString());
@@ -344,8 +306,7 @@ public class ChatterCraftServer extends Thread {
 								if (!un.isEmpty()) {
 									// Check if the username is in the database
 									boolean found = false;
-									Iterator<ChatterUser> iter = onlineUsers
-											.iterator();
+									Iterator<ChatterUser> iter = onlineUsers.iterator();
 									while (iter.hasNext()) {
 										ChatterUser user = iter.next();
 										if (user.getUsername().equals(un)) {
@@ -354,27 +315,19 @@ public class ChatterCraftServer extends Thread {
 										}
 									}
 									if (!found) {
-										onlineUsers
-												.add(new ChatterUser(un, ip));
-										sb
-												.append("<success>Login successful.</success>\n");
-										plugin
-												.getServer()
-												.broadcastMessage(
-														ChatColor.YELLOW
-																+ un
-																+ " [WWW User] has logged in to chat.");
+										onlineUsers.add(new ChatterUser(un, ip));
+										sb.append("<success>Login successful.</success>\n");
+										if (plugin.getNotifySignOn()) {
+											plugin.getServer().broadcastMessage(ChatColor.YELLOW + un + " [WWW User] has logged in to chat.");
+										}
 									} else {
-										sb
-												.append("<error>Login failed. The username is already in use.</error>\n");
+										sb.append("<error>Login failed. The username is already in use.</error>\n");
 									}
 								} else {
-									sb
-											.append("<error>Login failed. Invalid username.</error>\n");
+									sb.append("<error>Login failed. Invalid username.</error>\n");
 								}
 							} else {
-								sb
-										.append("<error>Login failure. Missing argument.</error>\n");
+								sb.append("<error>Login failure. Missing argument.</error>\n");
 							}
 						}
 						outToClient.writeBytes(sb.toString());
@@ -386,8 +339,7 @@ public class ChatterCraftServer extends Thread {
 				connectionSocket.close();
 			}
 		} catch (IOException e) {
-			logger.severe("[ChatterCraft] IOException in server thread: "
-					+ e.getMessage());
+			logger.severe("[ChatterCraft] IOException in server thread: " + e.getMessage());
 		}
 	}
 }

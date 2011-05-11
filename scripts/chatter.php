@@ -26,7 +26,7 @@ if ($action == "ACTION_CHATTER") {
 			echo "<error>Cannot send an empty message.</error>\n";
 		}
 	} else {
-		echo "<error>Cannot send a message being logged in.</error>\n";
+		echo "<error>Cannot send a message without being logged in.</error>\n";
 	}
 } else if ($action == "ACTION_LOGIN") {
 	$username = isset($_POST['user']) ? $_POST['user'] : "";
