@@ -1,0 +1,234 @@
+/* Image Button - A nice looking button */
+a.image-button:link, a.image-button:visited {
+	font-family: Verdana, sans-serif;
+	display: inline-block;
+	line-height: 16px;
+	height: 16px;
+	padding: 3px;
+	text-decoration: none;
+	cursor: pointer;
+	cursor: hand;
+	border: outset #CDCDCD 1px;
+	background-color: #CDCDCD;
+	color: #000000;
+	font-weight: normal;
+	font-size: 16px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	
+}
+a.image-button:active {
+	text-decoration: none;
+	border: inset #CDCDCD 1px;
+	color: #000000;
+}
+a.image-button:hover {
+	text-decoration: none;
+	background-color: #EEEEEE;
+	color: #000000;
+}
+img.image-button {
+	margin-right: 5px;
+	vertical-align: bottom;
+}
+
+/* The ChatterCraft Container */
+#chattercraft {
+	display: none;
+	position: absolute;
+	top: 10px;
+	left: 100px;
+	bottom: 150px;
+	width: 500px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000000;
+	background-color: #ffffff; /* fallback */
+	background-color: rgba(255,255,255,0.75);
+	font-family: Verdana, sans-serif;
+	color: #000000;
+	text-align: left;
+}
+/* The ChatterCraft Chat Window */
+#chattercraft_chatwin {
+	position: absolute;
+	top: 35px;
+	left: 0px;
+	right: 0px;
+	bottom: 30px;
+	overflow: none;
+}
+/* Status Message */
+#chattercraft_status_message {
+	display: none;
+}
+/* Messages scroller */
+#chattercraft_messages {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	right: 150px;
+	overflow: auto;
+	/* max-height set by jQuery based on height of #chattercraft_chatwin */
+}
+/* User list */
+#chattercraft_userlist {
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
+	width: 150px;
+	overflow: auto;
+	border-left-style: solid;
+	border-left-width: 1px;
+	border-left-color: #000000;
+	padding: 3px;
+	/* max-height set by jQuery based on height of #chattercraft_chatwin */
+}
+/* Login window */
+#chattercraft_loginwin {
+	display: block;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: #000000;
+	position: absolute;
+	top: 5px;
+	left: 0px;
+	right: 0px;
+	padding-bottom: 4px;
+	text-align: center;
+}
+/* Send message form */
+#chattercraft_sendform {
+	border-top-style: solid;
+	border-top-width: 1px;
+	border-top-color: #000000;
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	height: 30px;
+}
+/* Send message button */
+#chattercraft_send_button {
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	width: 70px;
+	text-align: center;
+}
+/* Send message text box */
+#chattercraft_sendform-msg {
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	right: 85px;
+}
+/* Message Class representing an error */
+.chattercraft_error {
+	background-color: #FF9999;
+	color: #990000;
+	line-height: 30px;
+	height: 30px;
+	padding: 0px 5px;
+}
+/* Message Class representing a regular message */
+.chattercraft_message {
+	background-color: #99FF99;
+	color: #009900;
+	line-height: 30px;
+	height: 30px;
+	padding: 0px 5px;
+}
+
+.chattercraft_chat {
+	position: relative;
+	bottom: 0px;
+	left: 0px;
+	display: block;
+	line-height: 24px;
+	padding: 5px;
+}
+
+/* In-game player label in the chat */
+b.player {
+	color: #0000FF;
+}
+/* WWW user label in the chat */
+b.user {
+	color: #FF0000;
+}
+/* User List DIV styles */
+div.userlist {
+	line-height: 14px;
+	height: 14px;
+	font-size: 12px
+}
+div.player {
+	color: #0000FF;
+}
+div.user {
+	color: #FF0000;
+}
+div.generic {
+	font-style: italic;
+}
+div.header {
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+}
+
+/* Custom Controls */
+div.control-container {
+	padding: 5px;
+	overflow: visible;
+}
+div.control {
+	width: 122px;
+	height: 17px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000000;
+	background-color: #FFFFFF;
+	color: #000000;
+}
+div.control-button {
+    width: 120px;
+	height: 15px;
+	background-color: #FFFFFF;
+	border-style: solid;
+	border-width: 1px;
+	border-bottom-color: #707070;
+	border-right-color: #707070;
+	border-top-color: #D0D0D0;
+	border-left-color: #D0D0D0;
+	cursor: pointer;
+	text-align: center;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+}
+div.control-button-selected {
+	border-bottom-color: #D0D0D0;
+	border-right-color: #D0D0D0;
+	border-top-color: #707070;
+	border-left-color: #707070;
+	font-weight: bold;
+}
+div.control-dropdown {
+	display: none;
+	position: absolute;
+	top: 24px;
+	left: 5px;
+	background-color: #FFFFFF;
+	color: #000000;
+	text-align: left;
+	font-family: Arial,sans-serif;
+	font-size: 12px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000000;
+}
+div.control-dropdown LABEL {
+	padding: 3px;
+}

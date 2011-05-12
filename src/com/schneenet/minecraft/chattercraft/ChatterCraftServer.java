@@ -297,38 +297,45 @@ public class ChatterCraftServer extends Thread {
 						}
 					} else if (split[0].equalsIgnoreCase("LOGIN")) {
 						StringBuffer sb = new StringBuffer();
-						if (split.length > 1 && !split[1].isEmpty()) {
-							// Parse the arguments into username and ip
-							String[] args = split[1].split("\\:", 2);
-							if (args.length > 1) {
-								String un = args[0];
-								String ip = args[1];
-								if (!un.isEmpty()) {
-									// Check if the username is in the database
-									boolean found = false;
-									Iterator<ChatterUser> iter = onlineUsers.iterator();
-									while (iter.hasNext()) {
-										ChatterUser user = iter.next();
-										if (user.getUsername().equals(un)) {
-											found = true;
-											break;
+						if (plugin.getChatEnabled()) {
+							if (split.length > 1 && !split[1].isEmpty()) {
+								// Parse the arguments into username and ip
+								String[] args = split[1].split("\\:", 2);
+								if (args.length > 1) {
+									String un = args[0];
+									String ip = args[1];
+									if (!un.isEmpty()) {
+										// Check if the username is in the
+										// database
+										boolean found = false;
+										Iterator<ChatterUser> iter = onlineUsers.iterator();
+										while (iter.hasNext()) {
+											ChatterUser user = iter.next();
+											if (user.getUsername().equals(un)) {
+												found = true;
+												break;
+											}
 										}
-									}
-									if (!found) {
-										onlineUsers.add(new ChatterUser(un, ip));
-										sb.append("<success>Login successful.</success>\n");
-										if (plugin.getNotifySignOn()) {
-											plugin.getServer().broadcastMessage(ChatColor.YELLOW + un + " [WWW User] has logged in to chat.");
+										if (!found) {
+											onlineUsers.add(new ChatterUser(un, ip));
+											sb.append("<success>Login successful.</success>\n");
+											if (plugin.getNotifySignOn()) {
+												plugin.getServer().broadcastMessage(ChatColor.YELLOW + un + " [WWW User] has logged in to chat.");
+											}
+										} else {
+											sb.append("<error>Login failed. The username is already in use.</error>\n");
 										}
 									} else {
-										sb.append("<error>Login failed. The username is already in use.</error>\n");
+										sb.append("<error>Login failed. Invalid username.</error>\n");
 									}
 								} else {
-									sb.append("<error>Login failed. Invalid username.</error>\n");
+									sb.append("<error>Login failure. Missing argument.</error>\n");
 								}
 							} else {
 								sb.append("<error>Login failure. Missing argument.</error>\n");
 							}
+						} else {
+							sb.append("<error>Chat is disabled!</error>\n");
 						}
 						outToClient.writeBytes(sb.toString());
 					} else {
