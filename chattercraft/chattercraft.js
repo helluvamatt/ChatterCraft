@@ -181,11 +181,15 @@ var chattercraft = {
 	},
 	
 	'update_heights': function() {
-		$('#chattercraft_messages').css('max-height', $('#chattercraft_chatwin').height() - $('#chattercraft_status_message').height());
+		$('#chattercraft_messages').css('max-height', $('#chattercraft_chatwin').height() - $('#chattercraft_status_message').height()- 1);
 		$('#chattercraft_userlist').css('height', $('#chattercraft_chatwin').height() - $('#chattercraft_status_message').height() - 6);
 	},
 	
 	'init': function() {
+		
+		// Register onresize event
+		$(window).bind('resize', chattercraft.update_heights);
+		
 		// Query for messages every one second
 		chattercraft.interval = window.setInterval(chattercraft.perform_query, 1000);
 		
