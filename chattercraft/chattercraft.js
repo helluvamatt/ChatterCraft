@@ -51,8 +51,8 @@ var chattercraft = {
 							new google.maps.Point(0, 0),
 							new google.maps.Point(16.0, 37.0)
 						);
-						// TODO Make a shadow image
 						
+						// TODO Make a shadow image
 						var shadow = new google.maps.MarkerImage("shadow-hiking-tourism.png",
 							new google.maps.Size(51.0, 37.0),
 							new google.maps.Point(0, 0),
@@ -189,7 +189,23 @@ var chattercraft = {
 		
 		// Register onresize event
 		$(window).bind('resize', chattercraft.update_heights);
-		
+
+		// Enable press enter to login
+		$('#chattercraft_username_field').keypress(function(e) {
+			if (e.which == '13') {
+				e.preventDefault();
+				chattercraft.set_username();
+			}
+		});
+
+		// Enable press enter to send
+		$('#chattercraft_sendform-msg').keypress(function(e) {
+			if (e.which == '13') {
+				e.preventDefault();
+				chattercraft.send_message();
+			}
+		});
+
 		// Query for messages every one second
 		chattercraft.interval = window.setInterval(chattercraft.perform_query, 1000);
 		
