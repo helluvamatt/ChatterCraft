@@ -5,6 +5,7 @@ var chattercraft = {
 	'msg_timeout': null,
 	'last': 0,
 	'username': "",
+	'show_player_markers': true, // Show player location markers
 	'player_markers': [],
 	'perform_query': function() {
 		$.ajax({
@@ -19,54 +20,63 @@ var chattercraft = {
 				var wwwusers = data.find('user');
 				var chatter = data.find('chatter');
 				
-				// UPDATING PLAYER LOCATION MARKERS
-				// 1. For Each Marker - Check if it is still needed
-				for (var i in chattercraft.player_markers) {
-					var p = players.filter(function(j) {
-						return $(this).text() == i;
+				if (chattercraft.show_player_markers) {
+					// UPDATING PLAYER LOCATION MARKERS
+					// 1. For Each Marker - Check if it is still needed
+					for (var i in chattercraft.player_markers) {
+						var p = players.filter(function(j) {
+							return $(this).text() == i;
+						});
+						if (p.length != 1) {
+							// 1a. If not delete
+							if (chattercraft.player_markers[i] != undefined) {
+								chattercraft.player_markers[i].setMap(null);
+								chattercraft.player_markers[i] = undefined;
+							}
+						} else {
+							// 1b. Otherwise, update location
+							var new_loc = overviewer.util.fromWorldToLatLng(parseFloat(p.attr('x')), parseFloat(p.attr('y')), parseFloat(p.attr('z')));
+							var old_loc = player_markers[i].getPosition();
+							if (new_loc.lat() != old_loc.lat() || new_loc.lng() != old_loc.lng()) {
+								chattercraft.player_markers[i].setPosition(new_loc);
+							}
+						}
+					}
+					
+					// 2. Add new markers for new players
+					players.each(function(i, e) {
+						var p = $(e);
+						if (chattercraft.player_markers[p.text()] == undefined) {
+							// TODO Use this: (maybe) player_avatar/player-avatar.php?player="+p.text()+"&s=1&bc=fff&bw=1&format=flat
+							var image = new google.maps.MarkerImage("hiking-tourism.png",
+								new google.maps.Size(32.0, 37.0),
+								new google.maps.Point(0, 0),
+								new google.maps.Point(16.0, 37.0)
+							);
+							
+							// TODO Make a shadow image
+							var shadow = new google.maps.MarkerImage("shadow-hiking-tourism.png",
+								new google.maps.Size(51.0, 37.0),
+								new google.maps.Point(0, 0),
+								new google.maps.Point(16.0, 37.0)
+							);
+							
+							chattercraft.player_markers[i] = new google.maps.Marker();
+							chattercraft.player_markers[i].setTitle(p.text());
+							chattercraft.player_markers[i].setIcon(image);
+							chattercraft.player_markers[i].setShadow(shadow);
+							chattercraft.player_markers[i].setPosition(overviewer.util.fromWorldToLatLng(parseFloat(p.attr('x')), parseFloat(p.attr('y')), parseFloat(p.attr('z'))));
+							chattercraft.player_markers[i].setMap(overviewer.map);
+						}
 					});
-					if (p.length != 1) {
-						// 1a. If not delete
+				} else {
+					for ( var i in chattercraft.player_markers) {
 						if (chattercraft.player_markers[i] != undefined) {
 							chattercraft.player_markers[i].setMap(null);
 							chattercraft.player_markers[i] = undefined;
 						}
-					} else {
-						// 1b. Otherwise, update location
-						var new_loc = overviewer.util.fromWorldToLatLng(parseFloat(p.attr('x')), parseFloat(p.attr('y')), parseFloat(p.attr('z')));
-						var old_loc = player_markers[i].getPosition();
-						if (new_loc.lat() != old_loc.lat() || new_loc.lng() != old_loc.lng()) {
-							chattercraft.player_markers[i].setPosition(new_loc);
-						}
 					}
 				}
-				
-				// 2. Add new markers for new players
-				players.each(function(i, e) {
-					var p = $(e);
-					if (chattercraft.player_markers[p.text()] == undefined) {
-						// TODO Use this: (maybe) player_avatar/player-avatar.php?player="+p.text()+"&s=1&bc=fff&bw=1&format=flat
-						var image = new google.maps.MarkerImage("hiking-tourism.png",
-							new google.maps.Size(32.0, 37.0),
-							new google.maps.Point(0, 0),
-							new google.maps.Point(16.0, 37.0)
-						);
-						
-						// TODO Make a shadow image
-						var shadow = new google.maps.MarkerImage("shadow-hiking-tourism.png",
-							new google.maps.Size(51.0, 37.0),
-							new google.maps.Point(0, 0),
-							new google.maps.Point(16.0, 37.0)
-						);
-						
-						chattercraft.player_markers[i] = new google.maps.Marker();
-						chattercraft.player_markers[i].setTitle(p.text());
-						chattercraft.player_markers[i].setIcon(image);
-						chattercraft.player_markers[i].setShadow(shadow);
-						chattercraft.player_markers[i].setPosition(overviewer.util.fromWorldToLatLng(parseFloat(p.attr('x')), parseFloat(p.attr('y')), parseFloat(p.attr('z'))));
-						chattercraft.player_markers[i].setMap(overviewer.map);
-					}
-				});
 				
 				// Chat stuff
 				if (chatter.length > 0) {
