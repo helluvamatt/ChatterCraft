@@ -233,5 +233,4 @@ var chattercraft = {
 		});
 		overviewer.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(chatControlContainer[0]);
 	}
-
 }
