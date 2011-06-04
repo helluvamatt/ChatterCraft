@@ -47,15 +47,15 @@ var chattercraft = {
 					players.each(function(i, e) {
 						var p = $(e);
 						if (chattercraft.player_markers[p.text()] == undefined) {
-							// TODO Use this: (maybe) player_avatar/player-avatar.php?player="+p.text()+"&s=1&bc=fff&bw=1&format=flat
-							var image = new google.maps.MarkerImage("chattercraft/hiking-tourism.png",
+							// Icon image
+							var image = new google.maps.MarkerImage("chattercraft/icon.php?player="+p.text()+"&usage=marker",
 								new google.maps.Size(32.0, 37.0),
 								new google.maps.Point(0, 0),
 								new google.maps.Point(16.0, 37.0)
 							);
 							
-							// TODO Make a shadow image
-							var shadow = new google.maps.MarkerImage("chattercraft/shadow-hiking-tourism.png",
+							// Shadow image
+							var shadow = new google.maps.MarkerImage("chattercraft/marker_shadow.png",
 								new google.maps.Size(51.0, 37.0),
 								new google.maps.Point(0, 0),
 								new google.maps.Point(16.0, 37.0)
