@@ -7,6 +7,7 @@ var chattercraft = {
 	'username': "",
 	'show_player_markers': true, // Show player location markers
 	'player_markers': [],
+	'player_info_windows': [],
 	'perform_query': function() {
 		$.ajax({
 			type: "POST",
@@ -33,12 +34,16 @@ var chattercraft = {
 								chattercraft.player_markers[i].setMap(null);
 								chattercraft.player_markers[i] = undefined;
 							}
+							if (chattercraft.player_info_windows[i] != undefined) {
+								chattercraft.player_info_windows[i] = undefined;
+							}
 						} else {
 							// 1b. Otherwise, update location
 							var new_loc = overviewer.util.fromWorldToLatLng(parseFloat(p.attr('x')), parseFloat(p.attr('y')), parseFloat(p.attr('z')));
 							var old_loc = player_markers[i].getPosition();
 							if (new_loc.lat() != old_loc.lat() || new_loc.lng() != old_loc.lng()) {
 								chattercraft.player_markers[i].setPosition(new_loc);
+								chattercraft.player_info_windows[i].setPosition(new_loc);
 							}
 						}
 					}
@@ -61,12 +66,25 @@ var chattercraft = {
 								new google.maps.Point(16.0, 37.0)
 							);
 							
+							// Location
+							var loc = overviewer.util.fromWorldToLatLng(parseFloat(p.attr('x')), parseFloat(p.attr('y')), parseFloat(p.attr('z')));
+							
+							var contentBody = "<div class=\"infoWindowContainer\"><img src=\"chattercraft/icon.php?player=" + p.text() + "&usage=info\" class=\"infoWindowImage\"><div class=\"infoWindowText\">" + p.text() + "</div></div>";
+							chattercraft.player_info_windows[i] = new google.maps.InfoWindow({
+								content: contentBody
+							});
+							chattercraft.player_info_windows[i].setPosition(loc);
+							
 							chattercraft.player_markers[i] = new google.maps.Marker();
 							chattercraft.player_markers[i].setTitle(p.text());
 							chattercraft.player_markers[i].setIcon(image);
 							chattercraft.player_markers[i].setShadow(shadow);
-							chattercraft.player_markers[i].setPosition(overviewer.util.fromWorldToLatLng(parseFloat(p.attr('x')), parseFloat(p.attr('y')), parseFloat(p.attr('z'))));
+							chattercraft.player_markers[i].setPosition(loc);
 							chattercraft.player_markers[i].setMap(overviewer.map);
+							google.maps.event.addListener(chattercraft.player_markers[i], 'click', function() {
+								chattercraft.player_info_windows[i].open(overviewer.map);
+							});
+							
 						}
 					});
 				} else {

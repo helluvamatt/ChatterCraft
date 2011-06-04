@@ -233,3 +233,16 @@ div.control-dropdown {
 div.control-dropdown LABEL {
 	padding: 3px;
 }
+
+div.infoWindowContainer {
+	display: block;
+}
+
+div.infoWindowText {
+	display: inline-block;
+	font-family: Verdana, sans-serif;
+}
+
+img.infoWindowImage {
+	float: left;
+}
