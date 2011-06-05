@@ -1,5 +1,5 @@
 <?PHP
-header("Content-type: text/xhtml");
+header("Content-type: text/xhtml; charset=UTF-8");
 
 //TODO Handle timeouts for when the server is offline.
 
