@@ -238,13 +238,13 @@ var chattercraft = {
 		chattercraft.interval = window.setInterval(chattercraft.perform_query, 1000);
 		
 		// Add a custom control for toggling chat
-		var chatControlContainer = $('<div id="chatControlContainer" class="control-container" title=\"Chat with players!\"></div>');
-		var chatControl          = $('<div id="chatControl" class="control"></div>');
-		var chatControlButton    = $('<div id="chatControlButton" class="control-button">Chat</div>');
+		var chatControlContainer = $('<div id="chatControlContainer" class="customControl" title=\"Chat with players!\"></div>');
+		var chatControl          = $('<div id="chatControl" class="top"></div>');
+		var chatControlButton    = $('<div id="chatControlButton" class="button">Chat</div>');
 		chatControl.append(chatControlButton);
 		chatControlContainer.append(chatControl);
 		chatControlButton.click(function() {
-			$(this).toggleClass('control-button-selected');
+			$(this).parent().toggleClass('top-active');
 			$('#chattercraft').slideToggle(400, function() {
 				chattercraft.update_heights();
 			});
