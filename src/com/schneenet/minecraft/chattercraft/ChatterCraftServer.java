@@ -270,7 +270,7 @@ public class ChatterCraftServer extends Thread {
 										ChatterUser user = iter.next();
 										if (user.getUsername().equals(un) && user.getIP().equals(ip)) {
 											user.access();
-											plugin.getServer().broadcastMessage(ChatColor.WHITE + "<" + ChatColor.AQUA + "[WWW Portal] " + ChatColor.RED + un + ChatColor.WHITE + "> " + args[2]);
+											plugin.getServer().broadcastMessage(plugin.getChatTag(un) + args[2]);
 											synchronized (messages) {
 												messages.add(ChatterMessage.createMessage(args[0] + " (WWW Portal)", "user", args[2]));
 											}

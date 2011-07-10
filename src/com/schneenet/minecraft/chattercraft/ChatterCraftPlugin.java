@@ -3,6 +3,7 @@ package com.schneenet.minecraft.chattercraft;
 import java.io.File;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
@@ -23,7 +24,9 @@ public class ChatterCraftPlugin extends JavaPlugin {
 	private int port = 25566;
 	private boolean notify_signon = true;
 	private boolean notify_signoff = true;
+	private String chat_tag = "&f<&b[WWW Portal] &c%u&f> ";
 	protected final Logger log = Logger.getLogger("Minecraft");
+	
 	
 	@Override
 	public void onDisable() {
@@ -43,6 +46,7 @@ public class ChatterCraftPlugin extends JavaPlugin {
 		Configuration config = new Configuration(configFile);
 		config.load();
 		chat_enabled = config.getBoolean("chat_enabled", true);
+		chat_tag = config.getString("chat_tag", "&f<&b[WWW Portal] &c%u&f> ");
 		send_all_chats = config.getBoolean("send_all_chats", true);
 		port = config.getInt("port", 25566);
 		notify_signon = config.getBoolean("notify.signon", true);
@@ -68,6 +72,26 @@ public class ChatterCraftPlugin extends JavaPlugin {
 	
 	protected boolean getNotifySignOff() {
 		return this.notify_signoff;
+	}
+	
+	protected String getChatTag(String username) {
+		String tag = "";
+		int len = this.chat_tag.length();
+		for (int i = 0; i < len; i++) {
+			if (chat_tag.charAt(i) == '&' && i < (len - 1) && chat_tag.charAt(i+1) != '&') {
+				// Figure out the color code
+				int code = Integer.parseInt(String.valueOf(chat_tag.charAt(i+1)), 16);
+				
+				// Append the color
+				tag += ChatColor.getByCode(code);
+				
+				// Advance the pointer
+				i++;
+			} else {
+				tag += chat_tag.charAt(i);
+			}
+		}
+		return tag.replace("%u", username);
 	}
 	
 	protected static ChatterCraftServer getChatterCraftServer() {
