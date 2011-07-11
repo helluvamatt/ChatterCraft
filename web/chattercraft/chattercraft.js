@@ -10,7 +10,7 @@ var chattercraft = {
 	'player_info_windows': [],
 	'perform_query': function() {
 		$.ajax({
-			type: "POST",
+			type: "GET",
 			url: "chattercraft/chatter.php",
 			data: {"last": chattercraft.last, "user": chattercraft.username},
 			success: function(xmldata) {
@@ -164,7 +164,7 @@ var chattercraft = {
 	'set_username': function() {
 		chattercraft.username = $('#chattercraft_username_field').val();
 		$.ajax({
-			type: "POST",
+			type: "GET",
 			url: "chattercraft/chatter.php",
 			data: {"action": "ACTION_LOGIN", "user": chattercraft.username},
 			success: function(xmldata) {
@@ -186,7 +186,7 @@ var chattercraft = {
 	
 	'send_message': function() {
 		$.ajax({
-			type: "POST",
+			type: "GET",
 			url: "chattercraft/chatter.php",
 			data: {"action": "ACTION_CHATTER", "user": chattercraft.username, "msg": $('#chattercraft_sendform-msg').val()},
 			success: function(xmldata) {
