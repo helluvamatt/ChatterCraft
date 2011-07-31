@@ -21,6 +21,7 @@ public class ChatterCraftPlugin extends JavaPlugin {
 	// Configuration
 	private boolean chat_enabled = true;
 	private boolean send_all_chats = true;
+	private boolean log_all_chats = true;
 	private int port = 25566;
 	private boolean notify_signon = true;
 	private boolean notify_signoff = true;
@@ -37,20 +38,31 @@ public class ChatterCraftPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		description = this.getDescription();
-		server = new ChatterCraftServer(port, log, this);
-		server.startup();
-		playerListener = new ChatterCraftPlayerListener(this);
-		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
+		
 		// Read configuration
 		File configFile = new File(this.getDataFolder(), "config.yml");
 		Configuration config = new Configuration(configFile);
 		config.load();
 		chat_enabled = config.getBoolean("chat_enabled", true);
 		chat_tag = config.getString("chat_tag", "&f<&b[WWW Portal] &c%u&f> ");
+		log_all_chats = config.getBoolean("log_all_chats", true);
 		send_all_chats = config.getBoolean("send_all_chats", true);
 		port = config.getInt("port", 25566);
 		notify_signon = config.getBoolean("notify.signon", true);
 		notify_signoff = config.getBoolean("notify.signoff", true);
+		if (!configFile.isFile()) {
+			config.save();
+		}
+		
+		// Start the ChatterCraft Server
+		server = new ChatterCraftServer(port, log, this);
+		server.startup();
+		
+		// Register chat events
+		playerListener = new ChatterCraftPlayerListener(this);
+		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
+		
+		// Started!
 		log.info( description.getName() + " version " + description.getVersion() + " is enabled!" );
 	}
 	
@@ -64,6 +76,10 @@ public class ChatterCraftPlugin extends JavaPlugin {
 	
 	protected boolean getSendAllChats() {
 		return this.send_all_chats;
+	}
+	
+	protected boolean getLogAllChats() {
+		return this.log_all_chats;
 	}
 	
 	protected boolean getNotifySignOn() {

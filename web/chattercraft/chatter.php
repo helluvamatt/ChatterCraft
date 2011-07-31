@@ -41,6 +41,7 @@ if ($action == "ACTION_CHATTER") {
 		echo "<error>The server seems to be OFFLINE.</error>\n";
 	}
 } else {
+	echo "<!-- Default ACTION -->\n";
 	$username = isset($_REQUEST['user']) ? $_REQUEST['user'] : "";
 	$last = isset($_REQUEST['last']) ? filter_var($_REQUEST['last'], FILTER_SANITIZE_NUMBER_INT) : 0;
 	// Connect and query
@@ -53,6 +54,7 @@ if ($action == "ACTION_CHATTER") {
 	} else {
 		echo "<error>The server seems to be OFFLINE.</error>\n";
 	}
+	echo "<!-- End Default ACTION -->\n";
 }
 echo "</chattercraft>\n";
 ?>

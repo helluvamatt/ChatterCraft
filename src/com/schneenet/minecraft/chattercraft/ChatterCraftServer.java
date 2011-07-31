@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -96,7 +97,7 @@ public class ChatterCraftServer extends Thread {
 	}
 
 	/**
-	 * The query plugin.getServer() thread.
+	 * The query thread.
 	 */
 	public void run() {
 		try {
@@ -271,6 +272,9 @@ public class ChatterCraftServer extends Thread {
 										if (user.getUsername().equals(un) && user.getIP().equals(ip)) {
 											user.access();
 											plugin.getServer().broadcastMessage(plugin.getChatTag(un) + args[2]);
+											if (plugin.getLogAllChats()) {
+												logger.log(Level.INFO, plugin.getChatTag(un) + args[2]);
+											}
 											synchronized (messages) {
 												messages.add(ChatterMessage.createMessage(args[0] + " (WWW Portal)", "user", args[2]));
 											}
